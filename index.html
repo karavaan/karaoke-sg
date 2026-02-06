@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>KARAOKE.SG | Compare KTV Prices in Singapore (2026 Price Index)</title>
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%23d8b4fe' /><stop offset='40%' style='stop-color:%23818cf8' /><stop offset='100%' style='stop-color:%2338bdf8' /></linearGradient></defs><rect width='100' height='100' rx='20' fill='%23050810'/><path d='M50 20c-8.3 0-15 6.7-15 15v20c0 8.3 6.7 15 15 15s15-6.7 15-15V35c0-8.3-6.7-15-15-15z' fill='url(%23g)'/><path d='M75 50c0 13.8-11.2 25-25 25S25 63.8 25 50' fill='none' stroke='url(%23g)' stroke-width='8' stroke-linecap='round'/><path d='M50 75v10' fill='none' stroke='url(%23g)' stroke-width='8' stroke-linecap='round'/></svg>">
@@ -56,12 +56,13 @@
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
             scroll-behavior: smooth;
+            width: 100%;
         }
 
         .glow {
             position: absolute;
-            width: 600px;
-            height: 600px;
+            width: 400px;
+            height: 400px;
             background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(5, 8, 16, 0) 70%);
             border-radius: 50%;
             z-index: -1;
@@ -92,16 +93,31 @@
         .tracking-tighter-extreme { letter-spacing: -0.05em; }
 
         /* Modal Overlay */
-        #legal-modal, #search-modal {
+        .modal {
             display: none;
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(5, 8, 16, 0.95);
             z-index: 100;
             backdrop-filter: blur(20px);
-            padding: 2rem;
+            overflow: hidden;
+        }
+        
+        .modal.active {
+            display: flex;
             align-items: center;
             justify-content: center;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: calc(100% - 2rem);
+            max-height: calc(100% - 2rem);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .search-bar-shimmer {
@@ -121,69 +137,67 @@
     <div class="glow" style="top: -10%; left: -10%;"></div>
     <div class="glow" style="bottom: -10%; right: -10%; background: radial-gradient(circle, rgba(216, 180, 254, 0.08) 0%, rgba(5, 8, 16, 0) 70%);"></div>
 
-    <nav class="p-8 flex justify-between items-center max-w-7xl mx-auto relative z-10">
-        <div class="brand-logo text-3xl select-none">KARAOKE.SG</div>
-        <div class="hidden md:flex gap-8 text-[10px] font-bold uppercase tracking-widest opacity-60">
-        </div>
+    <nav class="p-4 md:p-8 flex justify-between items-center max-w-7xl mx-auto relative z-10">
+        <div class="brand-logo text-xl md:text-3xl select-none">KARAOKE.SG</div>
     </nav>
 
-    <header class="max-w-5xl mx-auto text-center py-32 px-6 relative z-10">
-        <h1 class="text-6xl md:text-9xl font-black tracking-tighter-extreme mb-8 leading-[0.85] uppercase">
+    <header class="max-w-5xl mx-auto text-center py-12 md:py-32 px-4 md:px-6 relative z-10">
+        <h1 class="text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter-extreme mb-6 md:mb-8 leading-[0.85] uppercase">
             High Notes. <br><span class="gradient-text">Low Prices.</span>
         </h1>
-        <p class="text-lg md:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-            Singapore’s definitive KTV price comparison engine. We're centralizing real-time rates across the island to find your perfect room, instantly.
+        <p class="text-sm sm:text-base md:text-2xl text-slate-400 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+            Singapore's definitive KTV price comparison engine. We're centralizing real-time rates across the island to find your perfect room, instantly.
         </p>
 
         <div class="max-w-xl mx-auto cursor-pointer group">
-            <h3 class="text-[11px] font-bold uppercase tracking-[0.4em] text-sky-400/60 mb-6 drop-shadow-sm">
+            <h3 class="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] md:tracking-[0.4em] text-sky-400/60 mb-4 md:mb-6 drop-shadow-sm">
                 Discover Best Deals
             </h3>
             <div onclick="openSearch()" 
                  data-umami-event="search-bar-click"
-                 class="glass p-4 rounded-2xl flex items-center gap-4 border border-white/10 group-hover:border-sky-500/50 transition-all duration-500 shadow-2xl search-bar-shimmer">
-                <i class="fa-solid fa-magnifying-glass text-slate-500 ml-2 group-hover:text-sky-400 transition"></i>
-                <span class="text-slate-500 font-medium text-sm md:text-base group-hover:text-slate-300 transition">Search for a studio (e.g., Teo Heng Suntec)...</span>
+                 class="glass p-4 md:p-5 rounded-2xl flex items-center gap-3 md:gap-4 border border-white/10 group-hover:border-sky-500/50 transition-all duration-500 shadow-2xl search-bar-shimmer active:scale-95">
+                <i class="fa-solid fa-magnifying-glass text-slate-500 ml-1 md:ml-2 group-hover:text-sky-400 transition text-sm md:text-lg"></i>
+                <span class="text-slate-500 font-medium text-xs sm:text-sm md:text-base group-hover:text-slate-300 transition">Search studios...</span>
             </div>
         </div>
     </header>
 
-    <main id="about" class="max-w-6xl mx-auto px-6 pt-24 pb-8 relative z-10 border-t border-white/5">
-        <div class="grid md:grid-cols-2 gap-20 items-center">
+    <main id="about" class="max-w-6xl mx-auto px-4 md:px-6 pt-12 md:pt-24 pb-8 relative z-10 border-t border-white/5">
+        <div class="grid md:grid-cols-2 gap-10 md:gap-20 items-center">
             <article>
-                <h2 class="text-4xl font-black mb-8 tracking-tight uppercase italic">The Problem.</h2>
-                <p class="text-slate-400 mb-6 text-lg leading-relaxed">
+                <h2 class="text-2xl md:text-4xl font-black mb-4 md:mb-8 tracking-tight uppercase italic">The Problem.</h2>
+                <p class="text-slate-400 mb-4 md:mb-6 text-sm md:text-lg leading-relaxed">
                     Karaoke is a Singaporean staple, but finding the <strong>cheapest KTV studio</strong> is a headache. Whether you're searching for <strong>Teo Heng prices</strong> at Suntec or <strong>HaveFun Karaoke deals</strong>, rates vary wildly based on peak hours and head charges.
                 </p>
-                <h2 class="text-4xl font-black mb-8 tracking-tight uppercase italic gradient-text">Our Solution.</h2>
-                <p class="text-slate-400 text-lg leading-relaxed">
+                <h2 class="text-2xl md:text-4xl font-black mb-4 md:mb-8 tracking-tight uppercase italic gradient-text">Our Solution.</h2>
+                <p class="text-slate-400 text-sm md:text-lg leading-relaxed">
                     We are engineering a live database to <strong>compare KTV prices in Singapore</strong>. Karaoke.sg calculates the actual total cost—inclusive of GST and Service Charge—before you book.
                 </p>
             </article>
             
-            <div class="grid grid-cols-2 gap-6">
-                <div class="glass p-10 rounded-3xl border-t border-white/10">
-                    <div class="text-sky-400 text-5xl font-black mb-2 tracking-tighter">50+</div>
-                    <div class="text-xs uppercase text-slate-500 font-black tracking-widest">Studios Tracked</div>
+            <div class="grid grid-cols-2 gap-3 md:gap-6">
+                <div class="glass p-6 md:p-10 rounded-2xl md:rounded-3xl border-t border-white/10">
+                    <div class="text-sky-400 text-3xl md:text-5xl font-black mb-1 md:mb-2 tracking-tighter">50+</div>
+                    <div class="text-[9px] md:text-xs uppercase text-slate-500 font-black tracking-wider md:tracking-widest">Studios Tracked</div>
                 </div>
-                <div class="glass p-10 rounded-3xl border-t border-white/10">
-                    <div class="text-purple-400 text-5xl font-black mb-2 tracking-tighter">24/7</div>
-                    <div class="text-xs uppercase text-slate-500 font-black tracking-widest">Rate Monitoring</div>
+                <div class="glass p-6 md:p-10 rounded-2xl md:rounded-3xl border-t border-white/10">
+                    <div class="text-purple-400 text-3xl md:text-5xl font-black mb-1 md:mb-2 tracking-tighter">24/7</div>
+                    <div class="text-[9px] md:text-xs uppercase text-slate-500 font-black tracking-wider md:tracking-widest">Rate Monitoring</div>
                 </div>
-                <div class="glass p-10 rounded-3xl border-t border-white/10">
-                    <div class="text-sky-400 text-5xl font-black mb-2 tracking-tighter">LIVE</div>
-                    <div class="text-xs uppercase text-slate-500 font-black tracking-widest">Comparison</div>
+                <div class="glass p-6 md:p-10 rounded-2xl md:rounded-3xl border-t border-white/10">
+                    <div class="text-sky-400 text-3xl md:text-5xl font-black mb-1 md:mb-2 tracking-tighter">LIVE</div>
+                    <div class="text-[9px] md:text-xs uppercase text-slate-500 font-black tracking-wider md:tracking-widest">Comparison</div>
                 </div>
-                <div class="glass p-10 rounded-3xl border-t border-white/10">
-                    <div class="text-purple-400 text-5xl font-black mb-2 tracking-tighter">100%</div>
-                    <div class="text-xs uppercase text-slate-500 font-black tracking-widest">Independent</div>
+                <div class="glass p-6 md:p-10 rounded-2xl md:rounded-3xl border-t border-white/10">
+                    <div class="text-purple-400 text-3xl md:text-5xl font-black mb-1 md:mb-2 tracking-tighter">100%</div>
+                    <div class="text-[9px] md:text-xs uppercase text-slate-500 font-black tracking-wider md:tracking-widest">Independent</div>
                 </div>
             </div>
         </div>
 
-        <section class="max-w-3xl mx-auto mt-24 text-center">
-            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mb-6">Price Mapping Network</div>
-            <div class="flex flex-wrap justify-center gap-x-10 gap-y-4 text-xs font-semibold text-slate-400 border-t border-b border-white/5 py-8">
+        <section class="max-w-3xl mx-auto mt-12 md:mt-24 text-center">
+            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] md:tracking-[0.3em] mb-4 md:mb-6">Price Mapping Network</div>
+            <div class="flex flex-wrap justify-center gap-x-6 md:gap-x-10 gap-y-3 md:gap-y-4 text-xs font-semibold text-slate-400 border-t border-b border-white/5 py-6 md:py-8">
                 <div class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-500/50"></i> Teo Heng</div>
                 <div class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-500/50"></i> HaveFun</div>
                 <div class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-500/50"></i> Cash Studio</div>
@@ -192,27 +206,27 @@
             </div>
         </section>
 
-        <section id="faq" class="max-w-3xl mx-auto mt-32">
-            <h2 class="text-3xl font-black uppercase italic mb-12 text-center gradient-text">Frequently Asked</h2>
-            <div class="space-y-6">
-                <div class="glass p-6 rounded-2xl border-l-2">
-                    <h4 class="font-bold text-white mb-2 uppercase tracking-wide">What is the cheapest KTV in Singapore?</h4>
-                    <p class="text-slate-400 text-sm leading-relaxed">Typically, budget studios like Teo Heng offer the best hourly rates, while Cash Studio is great for per-head happy hour deals. Our engine tracks all of them to find the true winner based on your group size.</p>
+        <section id="faq" class="max-w-3xl mx-auto mt-16 md:mt-32">
+            <h2 class="text-2xl md:text-3xl font-black uppercase italic mb-6 md:mb-12 text-center gradient-text">Frequently Asked</h2>
+            <div class="space-y-4 md:space-y-6">
+                <div class="glass p-4 md:p-6 rounded-2xl border-l-2">
+                    <h4 class="font-bold text-white mb-2 uppercase tracking-wide text-sm md:text-base">What is the cheapest KTV in Singapore?</h4>
+                    <p class="text-slate-400 text-xs md:text-sm leading-relaxed">Typically, budget studios like Teo Heng offer the best hourly rates, while Cash Studio is great for per-head happy hour deals. Our engine tracks all of them to find the true winner based on your group size.</p>
                 </div>
-                <div class="glass p-6 rounded-2xl">
-                    <h4 class="font-bold text-white mb-2 uppercase tracking-wide">Do your prices include GST and Service Charge?</h4>
-                    <p class="text-slate-400 text-sm leading-relaxed">Yes. That is our primary goal. We calculate the "Final Bill" so you aren't surprised by the 10% Service Charge and 9% GST at the counter.</p>
+                <div class="glass p-4 md:p-6 rounded-2xl">
+                    <h4 class="font-bold text-white mb-2 uppercase tracking-wide text-sm md:text-base">Do your prices include GST and Service Charge?</h4>
+                    <p class="text-slate-400 text-xs md:text-sm leading-relaxed">Yes. That is our primary goal. We calculate the "Final Bill" so you aren't surprised by the 10% Service Charge and 9% GST at the counter.</p>
                 </div>
-                <div class="glass p-6 rounded-2xl">
-                    <h4 class="font-bold text-white mb-2 uppercase tracking-wide">When will the engine go live?</h4>
-                    <p class="text-slate-400 text-sm leading-relaxed"> The full real-time comparison engine is scheduled for a mid-2026 launch in Singapore.</p>
+                <div class="glass p-4 md:p-6 rounded-2xl">
+                    <h4 class="font-bold text-white mb-2 uppercase tracking-wide text-sm md:text-base">When will the engine go live?</h4>
+                    <p class="text-slate-400 text-xs md:text-sm leading-relaxed"> The full real-time comparison engine is scheduled for a mid-2026 launch in Singapore.</p>
                 </div>
             </div>
         </section>
 
-        <section class="mt-24 pt-12 border-t border-white/5">
-            <h3 class="text-sm font-bold uppercase tracking-[0.3em] text-slate-500 mb-8 text-center">Monitoring Studios in:</h3>
-            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs font-semibold text-slate-400 opacity-60 uppercase tracking-widest">
+        <section class="mt-12 md:mt-24 pt-8 md:pt-12 border-t border-white/5">
+            <h3 class="text-xs md:text-sm font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-slate-500 mb-6 md:mb-8 text-center">Monitoring Studios in:</h3>
+            <div class="flex flex-wrap justify-center gap-x-4 md:gap-x-8 gap-y-3 md:gap-y-4 text-[10px] md:text-xs font-semibold text-slate-400 opacity-60 uppercase tracking-wider md:tracking-widest">
                 <span>Orchard Road</span>
                 <span>Bugis</span>
                 <span>Suntec City</span>
@@ -227,62 +241,81 @@
         </section>
     </main>
 
-    <footer class="py-12 px-8 relative z-10 border-t border-white/5 bg-black/20">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
-            <div class="text-xs font-bold tracking-widest uppercase opacity-30">
+    <footer class="py-8 md:py-12 px-4 md:px-8 relative z-10 border-t border-white/5 bg-black/20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-8 text-center md:text-left">
+            <div class="text-[10px] md:text-xs font-bold tracking-wider md:tracking-widest uppercase opacity-30">
                 KARAOKE.SG &copy; 2026
             </div>
             
-            <div class="text-[10px] font-medium opacity-40 italic uppercase tracking-[0.2em]">
+            <div class="text-[9px] md:text-[10px] font-medium opacity-40 italic uppercase tracking-[0.15em] md:tracking-[0.2em]">
                 Made with ❤️ while singing in the shower.
             </div>
 
-            <div class="flex gap-8 text-[11px] font-bold uppercase tracking-widest">
+            <div class="flex gap-6 md:gap-8 text-[10px] md:text-[11px] font-bold uppercase tracking-wider md:tracking-widest">
                 <a href="javascript:void(0)" onclick="toggleLegal()" class="opacity-40 hover:opacity-100 hover:text-sky-400 transition">Legal</a>
             </div>
         </div>
     </footer>
 
     <!-- LEGAL MODAL -->
-    <div id="legal-modal">
-        <div class="max-w-3xl glass p-10 rounded-3xl relative border border-white/5">
-            <button onclick="toggleLegal()" class="absolute top-6 right-8 text-2xl opacity-50 hover:opacity-100">&times;</button>
-            <h2 class="text-xl font-black uppercase italic mb-8 tracking-tighter gradient-text">Legal & Non-Affiliation Notice</h2>
-            <div class="opacity-60 text-[11px] uppercase tracking-widest leading-relaxed space-y-6 text-slate-300">
+    <div id="legal-modal" class="modal">
+        <div class="modal-content w-full max-w-3xl mx-4 glass p-6 md:p-10 rounded-2xl md:rounded-3xl relative border border-white/5">
+            <button onclick="toggleLegal()" class="absolute top-4 md:top-6 right-4 md:right-8 text-2xl opacity-50 hover:opacity-100 active:opacity-100 w-10 h-10">&times;</button>
+            <h2 class="text-lg md:text-xl font-black uppercase italic mb-6 md:mb-8 tracking-tighter gradient-text pr-8">Legal & Non-Affiliation Notice</h2>
+            <div class="opacity-60 text-[10px] md:text-[11px] uppercase tracking-wide md:tracking-widest leading-relaxed space-y-4 md:space-y-6 text-slate-300">
                 <p><strong>KARAOKE.SG</strong> is an independent data aggregation and price comparison platform. We are NOT affiliated with, endorsed by, or sponsored by any KTV studios operating in Singapore.</p>
                 <p>The developer provides this platform "as-is" for informational purposes. Under no circumstances shall the developer or <strong>KARAOKE.SG</strong> be held liable for discrepancies arising from the use of this information.</p>
             </div>
-            <button onclick="toggleLegal()" class="mt-10 px-6 py-2 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition">Close Document</button>
+            <button onclick="toggleLegal()" class="mt-6 md:mt-10 px-6 py-3 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider md:tracking-widest hover:bg-white/5 active:bg-white/5 transition">Close Document</button>
         </div>
     </div>
 
     <!-- SEARCH MODAL -->
-    <div id="search-modal">
-        <div class="max-w-xl glass p-12 rounded-3xl text-center border border-sky-500/20 shadow-2xl">
-            <div class="mb-6 h-16 w-16 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto">
-                <i class="fa-solid fa-microchip text-sky-400 text-2xl animate-pulse"></i>
+    <div id="search-modal" class="modal">
+        <div class="modal-content w-full max-w-xl mx-4 glass p-6 md:p-12 rounded-2xl md:rounded-3xl text-center border border-sky-500/20 shadow-2xl">
+            <div class="mb-4 md:mb-6 h-12 w-12 md:h-16 md:w-16 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto">
+                <i class="fa-solid fa-microchip text-sky-400 text-xl md:text-2xl animate-pulse"></i>
             </div>
-            <h2 class="text-2xl font-black uppercase italic mb-4 tracking-tighter">System Initializing</h2>
-            <p class="text-slate-400 text-sm mb-8 leading-relaxed uppercase tracking-widest">Our real-time comparison engine is currently indexing 50+ studios. Search will be live in Mid-2026.</p>
-            <button onclick="closeSearch()" class="px-8 py-3 bg-sky-500 text-white font-black uppercase italic tracking-widest rounded-xl hover:bg-sky-400 transition shadow-lg shadow-sky-500/20">Acknowledge</button>
+            <h2 class="text-xl md:text-2xl font-black uppercase italic mb-3 md:mb-4 tracking-tighter">System Initializing</h2>
+            <p class="text-slate-400 text-xs md:text-sm mb-6 md:mb-8 leading-relaxed uppercase tracking-wide md:tracking-widest px-2">Our real-time comparison engine is currently indexing 50+ studios. Search will be live in Mid-2026.</p>
+            <button onclick="closeSearch()" class="px-8 py-3 bg-sky-500 text-white text-sm md:text-base font-black uppercase italic tracking-wider md:tracking-widest rounded-xl hover:bg-sky-400 active:bg-sky-400 transition shadow-lg shadow-sky-500/20">Acknowledge</button>
         </div>
     </div>
 
     <script>
         function toggleLegal() {
             const modal = document.getElementById('legal-modal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            modal.classList.toggle('active');
+            document.body.style.overflow = modal.classList.contains('active') ? 'hidden' : '';
+            document.body.style.position = modal.classList.contains('active') ? 'fixed' : '';
+            document.body.style.width = modal.classList.contains('active') ? '100%' : '';
         }
 
         function openSearch() {
             const modal = document.getElementById('search-modal');
-            modal.style.display = 'flex';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
         }
 
         function closeSearch() {
             const modal = document.getElementById('search-modal');
-            modal.style.display = 'none';
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
         }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
+        });
     </script>
 </body>
 </html>
